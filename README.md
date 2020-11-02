@@ -10,8 +10,8 @@ Syllabus: [IBM AI Engineering](IBM-AI-Engineering.ipynb)
 
 ## Certificates
 
-[IBM AI Engineering Professional Certificate]
-<img src="https://github.com/YUNSUCHO/IBM-AI-ENGINEERING/blob/main/cer.png" width="300px"/>
+
+<img src="https://github.com/YUNSUCHO/IBM-AI-ENGINEERING/blob/main/cer.png" width="500px"/>
 
 * [Machine Learning with Python](Coursera%20SG8FTPQYZN6A.pdf)
 * [Scalable Machine Learning on Big Data using Apache Spark](Coursera%20AQY45J4F23LH.pdf)
