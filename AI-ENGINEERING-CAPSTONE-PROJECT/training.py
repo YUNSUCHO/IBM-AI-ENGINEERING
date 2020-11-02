@@ -1,4 +1,5 @@
 # These are the libraries will be used for this lab.
+import tensorboard
 import argparse
 import torchvision.models as models
 from PIL import Image
@@ -7,6 +8,7 @@ from torchvision import transforms
 import torch.nn as nn
 import time
 import torch 
+from torch.utils.tensorboard import SummaryWriter
 import matplotlib.pylab as plt
 import numpy as np
 from torch.utils.data import Dataset, DataLoader
@@ -25,7 +27,6 @@ torch.manual_seed(0)
 
 
 
-
 parser = argparse.ArgumentParser()
 
 parser.add_argument('--modelName', required=False, help='name of model; name used to create folder to save model')
@@ -41,7 +42,8 @@ args = parser.parse_args()
 #----------------------------------------------------------------
 
 
-
+# default `log_dir` is "runs" - we'll be more specific here
+writer = SummaryWriter('runs/experiment02')
 
 
 
@@ -130,6 +132,9 @@ for epoch in range(n_epochs):
         
         # calculate loss 
         loss = criterion(z, y)
+        writer.add_scalar('training loss',
+                            loss,
+                            i )
         
         # calculate gradients of parameters 
         loss.backward()
@@ -140,41 +145,44 @@ for epoch in range(n_epochs):
         loss_list.append(loss.data)
         print("Finished in {} (s)".format(time.time() - i_start_time))
  
-    correct=0
-    for i, (x_test, y_test) in enumerate(validation_loader):
-        
-        print('-' * 30)
-        print("Iteration (validation phase) {} / {}".format(i + 1, int(N_test / batch_size)))
-        
-        i_start_time = time.time()
-        
-        x_test = x_test.to(device)
-        y_test = y_test.to(device)
-        
-        # set model to eval 
-        model.eval()
-        
-        #make a prediction 
-        z = model(x_test)
-        
-        #find max 
-        _, yhat = torch.max(z.data, 1)
-       
-        #Calculate misclassified  samples in mini-batch 
-        #hint +=(yhat==y_test).sum().item()
-        correct += (yhat == y_test).sum().item()
-        
-        print("Finished in {} (s)".format(time.time() - i_start_time))
-        
-   
-    accuracy=correct/N_test
-    print("Epoch %d - accuracy: %.3f" % (epoch+1, accuracy))
+        correct=0
+        for i, (x_test, y_test) in enumerate(validation_loader):
 
-    accuracy_list.append(accuracy)
-    print("=" * 72)
+            print('-' * 30)
+            print("Iteration (validation phase) {} / {}".format(i + 1, int(N_test / batch_size)))
 
-    # Duration for epoch
-    print("Finished epoch {} in {} (s)".format(epoch + 1, time.time() - start_time))
+            i_start_time = time.time()
+
+            x_test = x_test.to(device)
+            y_test = y_test.to(device)
+
+            # set model to eval 
+            model.eval()
+
+            #make a prediction 
+            z = model(x_test)
+
+            #find max 
+            _, yhat = torch.max(z.data, 1)
+
+            #Calculate misclassified  samples in mini-batch 
+            #hint +=(yhat==y_test).sum().item()
+            correct += (yhat == y_test).sum().item()
+
+            print("Finished in {} (s)".format(time.time() - i_start_time))
+
+
+        accuracy=correct/N_test
+        writer.add_scalar('accuracy',
+                                  accuracy,
+                                  i )
+        print("Epoch %d - accuracy: %.3f" % (epoch+1, accuracy))
+
+        accuracy_list.append(accuracy)
+        print("=" * 72)
+
+        # Duration for epoch
+        print("Finished epoch {} in {} (s)".format(epoch + 1, time.time() - start_time))
     
  
 
@@ -217,7 +225,7 @@ for i, (x_test, y_test) in enumerate(validation_loader_batch_one):
         if count >= max_num_of_items:
             break
 
-              
+
 
 
 
