@@ -1,4 +1,5 @@
 # These are the libraries will be used for this lab.
+import argparse
 import torchvision.models as models
 from PIL import Image
 import pandas
@@ -27,7 +28,7 @@ torch.manual_seed(0)
 
 parser = argparse.ArgumentParser()
 
-parser.add_argument('--modelName', required=True, help='name of model; name used to create folder to save model')
+parser.add_argument('--modelName', required=False, help='name of model; name used to create folder to save model')
 parser.add_argument('--config', help='path to file containing config dictionary; path in python module format')
 parser.add_argument('--batch_size', type = int, default = 100)
 parser.add_argument('--optimizer_type', default = 'Adam')
@@ -87,11 +88,11 @@ criterion = nn.CrossEntropyLoss()
 # Optimizer
 if(args.optimizer_type == 'Adam'):
     
-    optimizer = torch.optim.Adam([parameters  for parameters in model.parameters() if parameters.requires_grad],lr=0.001)
+    optimizer = torch.optim.Adam([parameters  for parameters in model.parameters() if parameters.requires_grad],lr=args.lr)
 
 elif (args.optimizer_type == 'SGD'):
     
-    optimizer = torch.optim.SGD([parameters  for parameters in model.parameters() if parameters.requires_grad],lr=0.001)
+    optimizer = torch.optim.SGD([parameters  for parameters in model.parameters() if parameters.requires_grad],lr=args.lr)
 
 else:
     raise NotImplementedError
@@ -99,7 +100,7 @@ else:
 
     
 # Training the model(traigning schedule)    
-n_epochs=1
+n_epochs=args.epochs
 loss_list=[]
 accuracy_list=[]
 correct=0
@@ -181,13 +182,7 @@ for epoch in range(n_epochs):
 
     if i > 0 and i % 2 == 0:
                 # Saving the model and the losses
-                torch.save({'generator_model': generator_model, 
-                            #'discriminator_model_pose': discriminator_model_conf,
-                            'discriminator_model_conf': discriminator_model_pose,
-                            #'criterion': criterion, 
-                            'optim_gen': optim_gen, 
-                            #'optim_disc_conf': optim_disc_conf,
-                            'optim_disc_pose': optim_disc_pose }, \
+                torch.save({'model': model}, \
                              os.path.join(args.modelName, 'model_{}_{}.pt'.format(epoch, i)))
 
     
