@@ -27,9 +27,13 @@ torch.manual_seed(0)
 
 parser = argparse.ArgumentParser()
 
+parser.add_argument('--modelName', required=True, help='name of model; name used to create folder to save model')
+parser.add_argument('--config', help='path to file containing config dictionary; path in python module format')
 parser.add_argument('--batch_size', type = int, default = 100)
 parser.add_argument('--optimizer_type', default = 'Adam')
 parser.add_argument('--mode', default = 'val')
+parser.add_argument('--lr', type=float, default=0.001, help='learning rate')
+parser.add_argument('--epochs', type=int, default=1, help='number of epochs')
 
 
 args = parser.parse_args()
@@ -52,19 +56,23 @@ validation_dataset = Data(train=False)
 print("done")
 
 
+# creat train/validation loader
 batch_size = 100
-train_loader = DataLoader(dataset = train_dataset, batch_size = batch_size)
-validation_loader = DataLoader(dataset = validation_dataset, batch_size = batch_size)
+train_loader = DataLoader(dataset = train_dataset, batch_size = args.batch_size)
+validation_loader = DataLoader(dataset = validation_dataset, batch_size = args.batch_size)
 
+
+# Call the model
 model = mymodel("resnet18")#models.resnet18(pretrained = True)
 model = model.to(device)
 model
 
+# trasfer learning(freezed the parameters)
 for param in model.parameters():
     param.requires_grad = False 
     
     
-    
+# Modify the last layer of the model    
 n_hidden = 512
 n_out = 2
 
@@ -72,12 +80,25 @@ model.fc = nn.Linear(n_hidden, n_out)
 
 
 
+# Loss function
 criterion = nn.CrossEntropyLoss()
 
-optimizer = torch.optim.Adam([parameters  for parameters in model.parameters() if parameters.requires_grad],lr=0.001)
+
+# Optimizer
+if(args.optimizer_type == 'Adam'):
+    
+    optimizer = torch.optim.Adam([parameters  for parameters in model.parameters() if parameters.requires_grad],lr=0.001)
+
+elif (args.optimizer_type == 'SGD'):
+    
+    optimizer = torch.optim.SGD([parameters  for parameters in model.parameters() if parameters.requires_grad],lr=0.001)
+
+else:
+    raise NotImplementedError
 
 
-
+    
+# Training the model(traigning schedule)    
 n_epochs=1
 loss_list=[]
 accuracy_list=[]
@@ -154,7 +175,24 @@ for epoch in range(n_epochs):
     # Duration for epoch
     print("Finished epoch {} in {} (s)".format(epoch + 1, time.time() - start_time))
     
+ 
+
+    # Save model
+
+    if i > 0 and i % 2 == 0:
+                # Saving the model and the losses
+                torch.save({'generator_model': generator_model, 
+                            #'discriminator_model_pose': discriminator_model_conf,
+                            'discriminator_model_conf': discriminator_model_pose,
+                            #'criterion': criterion, 
+                            'optim_gen': optim_gen, 
+                            #'optim_disc_conf': optim_disc_conf,
+                            'optim_disc_pose': optim_disc_pose }, \
+                             os.path.join(args.modelName, 'model_{}_{}.pt'.format(epoch, i)))
+
     
+   
+ 
     
 
     
