@@ -13,12 +13,12 @@ Syllabus: [IBM AI Engineering](IBM-AI-Engineering.ipynb)
 
 <img src="https://github.com/YUNSUCHO/IBM-AI-ENGINEERING/blob/main/cer.png" width="500px"/>
 
-* [Machine Learning with Python](Coursera%20SG8FTPQYZN6A.pdf)
-* [Scalable Machine Learning on Big Data using Apache Spark](Coursera%20AQY45J4F23LH.pdf)
-* [Introduction to Deep Learning & Neural Networks with Keras](Coursera%20KF38F7KA8ELK.pdf)
-* [Deep Neural Networks with PyTorch](Coursera%20Z3YDVGBMT25B.pdf)
-* [Building Deep Learning Models with TensorFlow](Coursera%20ZUKB5RN7G5L5.pdf)
-* [AI Capstone Project with Deep Learning](Coursera%2036FTF6J66NXJ.pdf)
+* [Machine Learning with Python]
+* [Scalable Machine Learning on Big Data using Apache Spark]
+* [Introduction to Deep Learning & Neural Networks with Keras]
+* [Deep Neural Networks with PyTorch]
+* [Building Deep Learning Models with TensorFlow]
+* [AI Capstone Project with Deep Learning]
 
 ## Notes and Summary
 
