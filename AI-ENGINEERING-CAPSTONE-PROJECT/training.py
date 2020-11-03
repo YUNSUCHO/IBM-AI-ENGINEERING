@@ -1,6 +1,7 @@
 # These are the libraries will be used for this lab.
 import tensorboard
 import argparse
+import torchvision
 import torchvision.models as models
 from PIL import Image
 import pandas
@@ -45,6 +46,16 @@ args = parser.parse_args()
 # default `log_dir` is "runs" - we'll be more specific here
 writer = SummaryWriter('runs/experiment02')
 
+# Function for tesor image
+def matplotlib_imshow(img, one_channel=False):
+    if one_channel:
+        img = img.mean(dim=0)
+    img = img / 2 + 0.5     # unnormalize
+    npimg = img.numpy()
+    if one_channel:
+        plt.imshow(npimg, cmap="Greys")
+    else:
+        plt.imshow(np.transpose(npimg, (1, 2, 0)))
 
 
 use_cuda = True
@@ -113,11 +124,24 @@ start_time = time.time()
 
 Loss=0
 start_time = time.time()
+train_count  = 0
+test_count = 0
 for epoch in range(n_epochs):
     for i, (x, y) in enumerate(train_loader):
         print('-' * 30)
         print('Iteration (train phase) {}/{}'.format(i+1, int(N_train/batch_size)))        
         i_start_time = time.time()
+        
+        # For tensorboard images #
+        # create grid of images
+        img_grid = torchvision.utils.make_grid(x)
+
+        # show images
+        matplotlib_imshow(img_grid, one_channel=True)
+
+        # write to tensorboard
+        writer.add_image('images', img_grid, i)
+        
         
         x = x.to(device)
         y = y.to(device)
@@ -132,9 +156,10 @@ for epoch in range(n_epochs):
         
         # calculate loss 
         loss = criterion(z, y)
+        train_count+=1
         writer.add_scalar('training loss',
                             loss,
-                            i )
+                            train_count)
         
         # calculate gradients of parameters 
         loss.backward()
@@ -145,6 +170,8 @@ for epoch in range(n_epochs):
         loss_list.append(loss.data)
         print("Finished in {} (s)".format(time.time() - i_start_time))
  
+
+
         correct=0
         for i, (x_test, y_test) in enumerate(validation_loader):
 
@@ -161,6 +188,14 @@ for epoch in range(n_epochs):
 
             #make a prediction 
             z = model(x_test)
+            
+            # 'test-loss in tensorboard #
+            testloss = criterion(z, y_test)
+            test_count +=1
+            writer.add_scalar('test-loss',
+                                testloss,
+                                test_count )
+        
 
             #find max 
             _, yhat = torch.max(z.data, 1)
@@ -170,6 +205,10 @@ for epoch in range(n_epochs):
             correct += (yhat == y_test).sum().item()
 
             print("Finished in {} (s)".format(time.time() - i_start_time))
+            # Correct in tensorboard #
+            writer.add_scalar('correct',
+                                correct,
+                                test_count )
 
 
         accuracy=correct/N_test
@@ -183,6 +222,8 @@ for epoch in range(n_epochs):
 
         # Duration for epoch
         print("Finished epoch {} in {} (s)".format(epoch + 1, time.time() - start_time))
+        
+        
     
  
 
@@ -195,17 +236,103 @@ for epoch in range(n_epochs):
 
     
    
- 
+# Confusion matrix # 
+def plot_confusion_matrix(cm,
+                          target_names,
+                          title='Confusion matrix',
+                          cmap=None,
+                          normalize=True):
+    """
+    given a sklearn confusion matrix (cm), make a nice plot
+
+    Arguments
+    ---------
+    cm:           confusion matrix from sklearn.metrics.confusion_matrix
+
+    target_names: given classification classes such as [0, 1, 2]
+                  the class names, for example: ['high', 'medium', 'low']
+
+    title:        the text to display at the top of the matrix
+
+    cmap:         the gradient of the values displayed from matplotlib.pyplot.cm
+                  see http://matplotlib.org/examples/color/colormaps_reference.html
+                  plt.get_cmap('jet') or plt.cm.Blues
+
+    normalize:    If False, plot the raw numbers
+                  If True, plot the proportions
+
+    Usage
+    -----
+    plot_confusion_matrix(cm           = cm,                  # confusion matrix created by
+                                                              # sklearn.metrics.confusion_matrix
+                          normalize    = True,                # show proportions
+                          target_names = y_labels_vals,       # list of names of the classes
+                          title        = best_estimator_name) # title of graph
+
+    Citiation
+    ---------
+    http://scikit-learn.org/stable/auto_examples/model_selection/plot_confusion_matrix.html
+
+    """
+    import matplotlib.pyplot as plt
+    import numpy as np
+    import itertools
+
+    accuracy = np.trace(cm) / float(np.sum(cm))
+    misclass = 1 - accuracy
+
+    if cmap is None:
+        cmap = plt.get_cmap('Blues')
+
+    plt.figure(figsize=(8, 6))
+    plt.imshow(cm, interpolation='nearest', cmap=cmap)
+    plt.title(title)
+    plt.colorbar()
+
+    if target_names is not None:
+        tick_marks = np.arange(len(target_names))
+        plt.xticks(tick_marks, target_names, rotation=45)
+        plt.yticks(tick_marks, target_names)
+
+    if normalize:
+        cm = cm.astype('float') / cm.sum(axis=1)[:, np.newaxis]
+
+
+    thresh = cm.max() / 1.5 if normalize else cm.max() / 2
+    for i, j in itertools.product(range(cm.shape[0]), range(cm.shape[1])):
+        if normalize:
+            plt.text(j, i, "{:0.4f}".format(cm[i, j]),
+                     horizontalalignment="center",
+                     color="white" if cm[i, j] > thresh else "black")
+        else:
+            plt.text(j, i, "{:,}".format(cm[i, j]),
+                     horizontalalignment="center",
+                     color="white" if cm[i, j] > thresh else "black")
+
+
+    plt.tight_layout()
+    plt.ylabel('True label')
+    plt.xlabel('Predicted label\naccuracy={:0.4f}; misclass={:0.4f}'.format(accuracy, misclass))
+    plt.show()    
+    
+    
     
 
     
+    
 ## testing part ##
+from sklearn.metrics import confusion_matrix
+
+
 
 count = 0
 max_num_of_items = 4
 validation_loader_batch_one = DataLoader(dataset = validation_dataset, batch_size = 1)
+nb_classes = 2
 
-
+# Initialize the prediction and label lists(tensors)
+predlist=torch.zeros(0,dtype=torch.long, device='cpu')
+lbllist=torch.zeros(0,dtype=torch.long, device='cpu')
 for i, (x_test, y_test) in enumerate(validation_loader_batch_one):
 
     # set model to eval
@@ -216,6 +343,9 @@ for i, (x_test, y_test) in enumerate(validation_loader_batch_one):
 
     # find max
     _, yhat = torch.max(z.data, 1)
+    
+    predlist=torch.cat([predlist,yhat.view(-1).cpu()])
+    lbllist=torch.cat([lbllist,y_test.view(-1).cpu()])
 
     # print mis-classified samples
     if yhat != y_test:
@@ -224,6 +354,28 @@ for i, (x_test, y_test) in enumerate(validation_loader_batch_one):
         count += 1
         if count >= max_num_of_items:
             break
+            
+# Confusion matrix
+conf_mat=confusion_matrix(lbllist.numpy(), predlist.numpy())
+plot_confusion_matrix(conf_mat , normalize    = False, target_names =  ['not-cracked', 'cracked'] )
+
+
+
+
+# Classification report
+
+from sklearn.metrics import classification_report
+print('\n Classification Report:\n', classification_report(lbllist.numpy(), predlist.numpy()))
+    
+
+import pandas as pd
+df = pd.DataFrame(classification_report(lbllist.numpy(), predlist.numpy(),
+                                        output_dict=True)).T
+
+df['support'] = df.support.apply(int)
+
+df.style.background_gradient(cmap='viridis',
+                             subset=pd.IndexSlice['0':'9', :'f1-score'])
 
 
 
