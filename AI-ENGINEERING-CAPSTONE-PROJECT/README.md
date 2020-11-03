@@ -10,7 +10,7 @@
 
 
 ## Dataset used:
-Dataset has been provided by IBM, which consists of cracked and not cracked images.Total numver of the images are 40,000 images.
+Dataset has been provided by IBM, which consists of cracked and not cracked images. Total number of the images are 40,000 images.
 The links to download the dataset has followed below:
 [https://s3-api.us-geo.objectstorage.softlayer.net/cf-courses-data/CognitiveClass/DL0321EN/data/concrete_data_week4.zip](https://s3-api.us-geo.objectstorage.softlayer.net/cf-courses-data/CognitiveClass/DL0321EN/data/concrete_data_week4.zip)
 
