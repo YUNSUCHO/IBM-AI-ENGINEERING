@@ -18,6 +18,11 @@ The links to download the dataset has followed below:
 ## Result visualization:
 
 Following results are the performance of the model that has been trained for 4 epochs. And due to the longer computation time, samller number of training and validation samples has been used for the model (train : validation = 10,000 : 5,000)
-<img src="https://github.com/YUNSUCHO/Adversarial-Pose-Enstimation/blob/main/README/Lanmark%20localization%20(after%20augmentation).png" width="300px"/>
+<img src="https://github.com/YUNSUCHO/IBM-AI-ENGINEERING/blob/main/AI-ENGINEERING-CAPSTONE-PROJECT/READ/Screen%20Shot%202020-11-03%20at%2010.08.52%20PM.png" width="300px"/>
+<img src="https://github.com/YUNSUCHO/IBM-AI-ENGINEERING/blob/main/AI-ENGINEERING-CAPSTONE-PROJECT/READ/Screen%20Shot%202020-11-03%20at%2010.09.13%20PM.png" width="300px"/>
 
+Confusion matrix
+<img src="https://github.com/YUNSUCHO/IBM-AI-ENGINEERING/blob/main/AI-ENGINEERING-CAPSTONE-PROJECT/READ/Screen%20Shot%202020-11-03%20at%2010.09.56%20PM.png" width="300px"/>
 
+Classification report
+<img src="https://github.com/YUNSUCHO/IBM-AI-ENGINEERING/blob/main/AI-ENGINEERING-CAPSTONE-PROJECT/READ/Screen%20Shot%202020-11-03%20at%2010.10.58%20PM.png" width="300px"/>
