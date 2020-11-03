@@ -24,7 +24,4 @@ Following results are the performance of the model that has been trained for 4 e
 
 
 <img src="https://github.com/YUNSUCHO/IBM-AI-ENGINEERING/blob/main/AI-ENGINEERING-CAPSTONE-PROJECT/READ/Untitled.png" width="300px"/>
-Confusion matrix
-
-<img src="https://github.com/YUNSUCHO/IBM-AI-ENGINEERING/blob/main/AI-ENGINEERING-CAPSTONE-PROJECT/READ/Screen%20Shot%202020-11-03%20at%2010.10.58%20PM.png" width="300px"/>
-Classification report
+Confusion matrix<img src="https://github.com/YUNSUCHO/IBM-AI-ENGINEERING/blob/main/AI-ENGINEERING-CAPSTONE-PROJECT/READ/Screen%20Shot%202020-11-03%20at%2010.10.58%20PM.png" width="300px"/>Classification report
