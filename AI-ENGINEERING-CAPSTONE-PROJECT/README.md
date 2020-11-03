@@ -17,7 +17,7 @@ The links to download the dataset has followed below:
 
 ## Result visualization:
 
-Following results are the performance of the model that has been trained for 4 epochs.
+Following results are the performance of the model that has been trained for 4 epochs. And due to the longer computation time, samller number of training and validation samples has been used for the model (Trainsplit are train : validation = 10,000 : 5,000)
 <img src="https://github.com/YUNSUCHO/Adversarial-Pose-Enstimation/blob/main/README/Lanmark%20localization%20(after%20augmentation).png" width="300px"/>
 
 
