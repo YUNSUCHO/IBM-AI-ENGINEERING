@@ -1,9 +1,6 @@
 # IBM-AI-ENGINEERING
 
 
-
-# coursera-ibm-ai-engineering
-
 Coursera: [AI Engineering Professional Certificate](https://www.coursera.org/professional-certificates/ai-engineer) by IBM.
 
 Syllabus: [IBM AI Engineering](IBM-AI-Engineering.ipynb)
